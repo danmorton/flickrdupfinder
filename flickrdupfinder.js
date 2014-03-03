@@ -1,3 +1,8 @@
+window.onerror = function(msg, url, line) {
+   FlurryAgent.logError(msg, url, line);
+   return false;
+};
+
 Function.prototype.args = function (arg) {  
     var func = this;  
     return function () {  
@@ -12,7 +17,8 @@ Function.prototype.args = function (arg) {
 //     FDF namespace setup.
 //         
 // ================================================================
-
+var dup_tag = "duplicate"
+var site_url = "http://flickrdupfinder.danielmorton.co/";
 var FDF = {};
 
 // ================================================================
@@ -21,6 +27,14 @@ var FDF = {};
 // ================================================================
 
 FDF.boot = function() {
+	//some tracking stuff
+	FlurryAgent.startSession("XY6PTG4T4RR794XH8WZH");
+	FlurryAgent.setAppVersion("1.0");
+	FlurryAgent.logEvent("FDF.boot");
+	//end tracking
+	var c = getCookie("dup_tag");
+	if (c != undefined && c != "")
+		$("#dup_tag").val(c);
     // click handlers
     $("#loginbtn").click(FDF.on_click_login);
     $("#findbtn").click(FDF.on_click_find);
@@ -34,7 +48,12 @@ FDF.boot = function() {
     $(window).bind("scroll", FDF.on_resize);
     
     // issue status request
-    $.getJSON("status.json", {}, success : FDF.on_json_status);
+    $.getJSON(site_url+"flickr_redirect.php", 
+				{"nojsoncallback" : "1",
+				"method" : "flickr.auth.checkToken",
+				"auth_token" : "true"
+				},
+				FDF.on_json_status);
 }
 
 // ================================================================
@@ -43,11 +62,14 @@ FDF.boot = function() {
 // ================================================================
 
 FDF.on_click_login = function() {
+	//some tracking stuff
+	FlurryAgent.logEvent("FDF.on_click_login");	
+	//end tracking
     // show wait dialog
     FDF.dialog("dlg_login", 300, 100);
     
     // redirect to flickr
-    window.location="http://flickr.com/services/auth/?api_key=9ee2032372b12730ea8b12e7d839ed5a&perms=write&api_sig=d3c9fbee2e20ed9da756491e095c58f3";
+    window.location = site_url+"do_auth.php";
 }
 
 // ================================================================
@@ -110,9 +132,8 @@ FDF.dialog_hide = function() {
 // ================================================================
 
 FDF.on_json_status = function(data) {
-    if (data.status == "auth") {
-        // user is authenticated, show the next page
-        $("#name").html(data.username);
+    if (data.stat == "ok" && data.auth.user.username != undefined) {
+        $("#name").html();
         FDF.show_page("find");
     } else {
         // user is not authenticated, show the login page
@@ -148,7 +169,12 @@ FDF.show_page = function(name) {
 // ================================================================
 
 FDF.on_click_find = function() {
-    
+	//some tracking stuff
+	FlurryAgent.logEvent("FDF.on_click_find");	
+	//end tracking
+    dup_tag = $("#dup_tag").val();
+    setCookie("dup_tag", dup_tag, 365);
+//    alert(dup_tag);
     // show the "processing" dialog
     FDF.dialog("dlg_processing", 300, 200);  
     
@@ -166,7 +192,16 @@ FDF.on_click_find = function() {
 // ================================================================
 
 FDF.fetch = function(page) {
-    $.getJSON("list.json", {"p":page}, FDF.on_json_list);
+    $.getJSON(site_url+"flickr_redirect.php", 
+				{"nojsoncallback" : "1",
+				"method" : "flickr.photos.search",
+				"page" : page,
+				"per_page" : "500",
+				"user_id" : "me",
+				"extras" : "date_upload,date_taken",
+				"auth_token" : "true"
+				},
+				FDF.on_json_list);
 }
 
 // ================================================================ 
@@ -196,7 +231,7 @@ FDF.on_json_list = function(data) {
     }
     
     // if last page, start analysis
-    if (page == pages) {
+    if (page >= pages) {
         FDF.analyze();   
     }
 }
@@ -237,7 +272,7 @@ FDF.analyze = function() {
             var fsrc = "http://www.flickr.com/photo.gne?id=" + elt.id;
             var image = $("<img src=\"" + src + "\" alt=\"\" class=\"dup_img\"/>");
             var title = $("<span class=\"dup_title\"> <b>title :</b> " + elt.title + "</span>");   
-            var ident = $("<span class=\"dup_id\"> <b>identifier :</b> <a href=\"http://flickr.com/photo.gne?id=" + elt.id + "\" target=\"_blank\">"+ elt.id + "</a></span>");   
+            var ident = $("<span class=\"dup_id\"> <b>identifier :</b> <a target=\"_blank\" href=\"http://flickr.com/photo.gne?id=" + elt.id + "\" target=\"_blank\">"+ elt.id + "</a></span>");   
             var sets = $("<span class=\"dup_sets\"> <b>sets : </b> <img src=\"images/load_2.gif\" alt=\"\" /></span>");   
             var status = $("<div class=\"dup_status\" id=\"status_" + elt.id + "\"><div>Duplicate tag :</div><div class=\"switch_out\"><div class=\"switch_in\"></div></div>");   
             
@@ -256,7 +291,7 @@ FDF.analyze = function() {
         }
     }
     
-    $("#dupcount").html("Found " + count + " duplicates !. Below is the list of duplicate candidates. You can now tag them with the 'duplicate' tag. Then <a href=\"http://www.flickr.com/photos/me/tags/duplicate\">click here</a> to go to Flickr and delete the tagged photos.");
+    $("#dupcount").html("Found " + count + " duplicates! Below is the list of duplicate candidates. You can now tag them with the '" + dup_tag + "' tag. Then <a target=\"_blank\" href=\"http://www.flickr.com/photos/me/tags/" + dup_tag + "\">click here</a> to go to Flickr and delete the tagged photos.");
     FDF.element_info(0);
     FDF.fetch_status();
 }
@@ -268,7 +303,14 @@ FDF.analyze = function() {
 
 FDF.element_info = function(num) {
     FDF.element_num = num;
-    $.getJSON("info.json", {id:FDF.elements[num].id} ,FDF.on_json_info);
+    FDF.element_last_id = FDF.elements[num].id;    
+    $.getJSON(site_url+"flickr_redirect.php", 
+				{"nojsoncallback" : "1",
+				"method" : "flickr.photos.getAllContexts",
+				"photo_id" : FDF.elements[num].id,
+				"auth_token" : "true"
+				},
+				FDF.on_json_info);
 }
 
 // ================================================================ 
@@ -278,13 +320,13 @@ FDF.element_info = function(num) {
 
 FDF.on_json_info = function(data) {
 
-    var id = data.id;
+    var id = (data.id ? data.id : FDF.element_last_id);
     
     var sets = data["set"];
     if (sets) {
         var html_sets = "<b>sets :</b> ";
         for (var i = 0; i < sets.length; i++) {
-            html_sets = html_sets + "<a href=\"http://www.flickr.com/photos/me/sets/" + sets[i].id + "/\">" + sets[i].title + "</a> ";   
+            html_sets = html_sets + "<a target=\"_blank\" href=\"http://www.flickr.com/photos/me/sets/" + sets[i].id + "/\">" + sets[i].title + "</a> ";   
         }
         $("#p_" + id).find(".dup_sets").html(html_sets);
     } else {
@@ -324,18 +366,39 @@ FDF.handle = function(element) {
     FDF.map[key].push(element);
 }
 
-
-
-FDF.fetch_status = function() {
-     $.getJSON("duplicate.json", FDF.on_json_duplicate);
+FDF.fetch_status = function(page) {
+	if (page == undefined) page = 1;
+	
+	$.getJSON(site_url+"flickr_redirect.php", 
+			{"nojsoncallback" : "1",
+			"method" : "flickr.photos.search",
+			"page" : page,
+			"per_page" : "500",
+			"user_id" : "me",
+			"tags" : dup_tag,
+			"auth_token" : "true"
+			},
+			FDF.on_json_duplicate);	
 }
 
-
 FDF.on_json_duplicate = function(data) {
-    for (var i = 0; i < data.length; i++) {
-        FDF.status[data[i]] = true;    
+    var page  = data.photos.page;
+    var pages = data.photos.pages;
+    var list = data.photos.photo;    
+    // fetch next page
+    if (page < pages) {
+        FDF.fetch_status(page + 1);      
     }
-    FDF.update_status();
+    // handles every photo of current page
+    var photos = data.photos.photo;    
+    for (var i = 0; i < photos.length; i++) {
+        FDF.status[photos[i]["id"]] = true;   
+    }
+    
+    // if last page, start analysis
+    if (page >= pages) {
+	    FDF.update_status();
+    }
 }
 
 FDF.update_status = function() {
@@ -354,11 +417,58 @@ FDF.on_click_status = function(id) {
     FDF.status[id] = !FDF.status[id];
     FDF.set_status(id, FDF.status[id]);
     
-    var url = FDF.status[id] ? "tag.json?id=" + id : "untag.json?id=" + id;
-    
-    $.getJSON(url);
+    if (FDF.status[id])
+    {
+		$.getJSON(site_url+"flickr_redirect.php", 
+				{"nojsoncallback" : "1",
+				"method" : "flickr.photos.addTags",
+				"photo_id" : id,
+				"tags" : dup_tag,
+				"auth_token" : "true"
+				});
+    } else {
+		$.getJSON(site_url+"flickr_redirect.php", 
+				{"nojsoncallback" : "1",
+				"method" : "flickr.photos.getInfo",
+				"photo_id" : id,
+				"auth_token" : "true"
+				},
+			function( data ) {		
+				// handles every photo of current page
+				var alltags = data.photo.tags.tag;
+				for (var i = 0; i < alltags.length; i++) {
+					if (alltags[i]["raw"] == dup_tag)
+					{
+						$.getJSON(site_url+"flickr_redirect.php", 
+							{"nojsoncallback" : "1",
+							"method" : "flickr.photos.removeTag",
+							"tag_id" : alltags[i]["id"],
+							"auth_token" : "true"
+							});	    	    
+					}
+				}			
+		});
+    }
 }
 
+function setCookie(cname,cvalue,exdays)
+{
+	var d = new Date();
+	d.setTime(d.getTime()+(exdays*24*60*60*1000));
+	var expires = "expires="+d.toGMTString();
+	document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+function getCookie(cname)
+{
+	var name = cname + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0; i<ca.length; i++) 
+	  {
+	  var c = ca[i].trim();
+	  if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+	  }
+	return "";
+}
 
 $(document).ready(FDF.boot);
 

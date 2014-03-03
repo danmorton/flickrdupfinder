@@ -1,13 +1,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
-
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-
     <head>
         <title>FlickDupFinder - find duplicate photos on Flickr</title>
         <link rel="stylesheet" type="text/css" href="screen.css" />
         <meta name="title" value="FlickrDupFinder - find duplicate photos on Flickr" />
         <meta name="description" value="FlickrDupFinder - an online simple tool to find duplicate photos on Flickr and tag them" />
+		<script src="https://cdn.flurry.com/js/flurry.js"></script>
+		<script>
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		  ga('create', 'UA-48520402-1', 'danielmorton.co');
+		  ga('send', 'pageview');
+		</script>        
     </head>
     
     <body>
@@ -17,7 +24,7 @@
 
                 </div>
                 <div id="hdrl2">
-                    <span id="title1">Flickr Dup Finder</span>
+                    <span id="title1">Flickr Dup Finder 2</span>
                     <span id="title2">find duplicates on your Flickr account</span>
                 </div>
                 <div id="hdrl3">
@@ -33,25 +40,44 @@
             
             <div id="main">
                 <div class="page" id="page_login">
-                    <h1> What is FlickDupFinder ? </h1>
+                    <h1> What is FlickDupFinder 2? </h1>
                     <p> Ever got your photos uploaded twice on Flickr ? Wondering if you got photos more than once
-                    on your Flickr account ?</p>
-                    
+                    on your Flickr account ?</p>                    
                     <p> <b>FlickrDupFinder</b> let you easily find duplicate photos on your Flickr account.</p>
-            
-                    <p> Login,  click on "Find duplicate". <b>FlickrDupFinder</b> will fetch your photos, analyze them,
+        			
+                    <p>How it works:<br/>
+                    1) Login and authorize us (we just need write permissions to tag the duplicates)<br/>
+                    2) Enter duplicate tag (defaults to 'duplicate', clever I know)<br/>
+                    3) Click on "Find duplicate"<br/>
+                    4) Wait while We will fetch your photos, analyze them,
                         and show you a list of duplicate candidates. </p>
                
                         
-                    <p> <b>FlickDupFinder</b> is an online tool, so nothing to download or install. Just use <b>FlickrDupFinder</b> 
-                        right away.</p>
+                    <p><b>FlickDupFinder 2</b> is an online tool, so nothing to download or install. Just use <b>FlickrDupFinder</b> right away.</p>
                      
-                    <p> To procede, please login with Flickr : </p>
+                    <p> To start, please login with Flickr by clicking the button below : </p>
                     
                     <div class="attn">
                         <span id="loginbtn" class="button">Login with Flickr</span>
                     </div>
 
+                    <p>This site is based off a project <a href="http://www.christophemaillot.fr/" target="_blank">Christophe Maillot</a>. The source is available on github, <a href="https://github.com/christophemaillot/flickrdupfinder" target="_blank">here.</a> </p>
+					<br/>                    
+					<p>
+					<span style="font-size: 1.3em;">Have you used FlickDupFinder 2? Like us? Want to motivate development?</span><br/>
+					You can help keep us pay the bills and keep the site up by sending what you feel this service was worth to you to us via paypal: supportus@flickrdupfinder.danielmorton.co<br/>
+					</p>
+					<b>I am for profit! This would not be considered a donation for tax purposes. I am going to use any money to pay for hosting.</b>
+					<br/>
+					<form action="https://www.paypal.com/cgi-bin/webscr" method="post" name="_xclick">
+						<input name="cmd" type="hidden" value="_xclick">
+						<input name="business" type="hidden" value="supportus@flickrdupfinder.danielmorton.co">
+						<input name="currency_code" type="hidden" value="USD">
+						<input name="item_name" type="hidden" value="Keep The lights on">
+						<input name="amount" type="text" value="9.99" placeholder="Thank You!">
+						<input type="submit" value="Send via Paypal">
+					</form>
+					</p>
                 </div>
                 
                 <div class="page" id="page_find">
@@ -59,6 +85,7 @@
                     <p> You're logged in as <span id="name">anonymous</span>. You can now click on "find duplicates" to start
                         finding duplicates photos.</p>
                     <div class="attn">
+                    	Tag duplicates with: <input type="text" id="dup_tag" name="dup_tag" value="duplicate" /><br/><br/>
                         <span id="findbtn" class="button">Find duplicates</span>
                     </div>
                 </div>
@@ -79,7 +106,7 @@
             <div><img src="images/load.gif" alt="loading ..." /></div>
         </div>
         <div id="dlg_processing" class="dlg">
-            <div>processing ... page <span id="page">1</span> / <span id="pages">1</span> </div>
+            <div>Please wait wile we take a look at your photos.<br/><br/>Processing... page <span id="page">1</span> / <span id="pages">1</span> </div>
             <div><img src="images/load.gif" alt="loading ..." /></div>
         </div>
     <script type="text/javascript" src="jquery-1.4.2.min.js"></script>

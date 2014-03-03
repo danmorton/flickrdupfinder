@@ -2,18 +2,20 @@
 body {
     margin: 0px;
     padding: 0px;
-    background-color: #E3DDCB;
-    color: #00000;
+    background-color: #358EAE;
+    color: white;
 }
-
+a {
+	color: orange;
+}
 #container {
     width: 1024px;
     border: 1px solid black;
-    border: 8px solid #d4cfbb;
-    color: black;
+    border: 8px solid #2c7b97;
+    color: white;
     margin-left: auto;
     margin-right: auto;
-    background-color: #F7F5EF;
+    background-color: eff2f7;
     margin-top: 8px;
     min-height: 512px;
 }
@@ -48,7 +50,7 @@ body {
     left: 30px;
     color: #304040;
     text-shadow: #909090 1px 1px 1px;
-    width: 230px;
+    width: 240px;
     text-align: justify;
 }
 
@@ -75,7 +77,7 @@ body {
 }
 
 .stepsep {
-    color: #808080;   
+    color: #3c6c7d;   
 }
 
 .step {
@@ -84,14 +86,14 @@ body {
 }
 
 #stepfind, #stepremove {
-    color: #909090;   
+    color: #bdbdbd;   
 }
 
 
 .page {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    color: #404040;
+    color: white;
     padding-right: 8px;
     padding-left: 8px;
     display: none;
@@ -101,7 +103,7 @@ body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     color: #F0F0F0;
-    background-color: #808080;
+    background-color: #3c6c7d;
     padding: 2px;
     padding-left: 8px;
     border-radius: 6px;
@@ -112,6 +114,7 @@ body {
 
 .button {
      cursor: pointer;
+/*
      padding: 6px;
      border-top: 1px solid #E0E0E0;
      border-left: 1px solid #E0E0E0;
@@ -122,6 +125,39 @@ body {
      background-color: #D0D0D0;
 
      text-shadow: #909090 1px 1px 1px;
+*/
+
+	font-size:16px;
+	font-family:Arial;
+	font-weight:normal;
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
+	border-radius:8px;
+	border:1px solid #dcdcdc;
+	padding:9px 18px;
+	text-decoration:none;
+	background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
+	background:-ms-linear-gradient( top, #ededed 5%, #dfdfdf 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(5%, #ededed), color-stop(100%, #dfdfdf) );
+	background-color:#ededed;
+	color:#777777;
+	display:inline-block;
+	text-shadow:1px 1px 0px #ffffff;
+ 	-webkit-box-shadow:inset 1px 1px 0px 0px #ffffff;
+ 	-moz-box-shadow:inset 1px 1px 0px 0px #ffffff;
+ 	box-shadow:inset 1px 1px 0px 0px #ffffff;
+}
+.button:hover {
+	background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
+	background:-ms-linear-gradient( top, #dfdfdf 5%, #ededed 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(5%, #dfdfdf), color-stop(100%, #ededed) );
+	background-color:#dfdfdf;
+}
+.button:active {
+	position:relative;
+	top:1px;
 }
 
 .attn {
@@ -130,8 +166,8 @@ body {
 }
 
 .dlg {
-    background-color: white;
-    border: 8px solid #d4cfbb;
+    background-color: #358EAE;
+    border: 8px solid #2c7b97;
     display: none;
     position: absolute;
 }
@@ -234,7 +270,7 @@ body {
 }    
 
 .wrapper:hover {
-    background-color: #D8D8D0;
+    background-color: #65adc7;
     padding: 8px;
 }
 

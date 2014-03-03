@@ -31,6 +31,4 @@
     $_SESSION['flickr_token']  = $token;
     $_SESSION['flickr_message']  = $message;
     
-    header("Location: http://www.christophemaillot.fr/flickrdupfinder/");
-
-?>
+    header("Location: http://flickrdupfinder.danielmorton.co/");
