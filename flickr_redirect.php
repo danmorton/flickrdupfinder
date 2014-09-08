@@ -23,4 +23,4 @@
     if (isset($_GET['auth_token']) && $_GET['auth_token'] == "true")
     	$_GET['auth_token'] = $token;
 	$args = array_merge(array("format" => "json", "api_key" => $api_key), $_GET);
-	header("Location: " . "http://api.flickr.com/services/rest/?" . getSignedParams($args, $flickr_apikey, $flickr_secret));
+	header("Location: " . "https://api.flickr.com/services/rest/?" . getSignedParams($args, $flickr_apikey, $flickr_secret));
