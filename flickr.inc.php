@@ -19,7 +19,7 @@ class Flickr {
     
     function send($command, $args) {
         $args = array_merge(array("method" => $command, "format" => "php_serial", "api_key" => $this->api_key), $args);
-        $url = "http://api.flickr.com/services/rest/?" . $this->getSignedParams($args);
+        $url = "https://api.flickr.com/services/rest/?" . $this->getSignedParams($args);
         $rsp = file_get_contents($url);
         $obj = unserialize($rsp);
         return $obj;
